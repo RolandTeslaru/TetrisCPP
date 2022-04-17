@@ -39,8 +39,8 @@ Texture WinBackgroundTexture;
 Sprite s_Block(BlockTexture);
 Sprite WinBackgroundSprite(WinBackgroundTexture);
 RectangleShape MapShape(Vector2f(MapLength * 44.f, MapHeight * 44.f));
-RectangleShape TetrominoSprite(Vector2f(42.f,42.f));
-RectangleShape StoredPiece(Vector2f(42.f , 42.f));
+RectangleShape TetrominoSprite(Vector2f(42.f * scale,42.f * scale));
+RectangleShape StoredPiece(Vector2f(42.f * scale , 42.f * scale));
 Event GameEvent;
 
 TetrominoInf blocks[7] =
@@ -144,9 +144,9 @@ void initialize()
     TextScore.setFont(TextFont);
     TextDeletedLines.setFont(TextFont);
     
-    TextLevel.setCharacterSize(15);
-    TextScore.setCharacterSize(15);
-    TextDeletedLines.setCharacterSize(15);
+    TextLevel.setCharacterSize(20 * scale);
+    TextScore.setCharacterSize(20 * scale);
+    TextDeletedLines.setCharacterSize(20 * scale);
     
     TextLevel.setFillColor(Color::White);
     TextScore.setFillColor(Color::White);
@@ -278,7 +278,7 @@ bool isPossibleDown(TetrominoInf Tetromino)
             if(Tetromino.matrix[i][j])
             {
                 TetrominoSprite.setPosition((Tetromino.PozX + j) * TileSize, (Tetromino.PozY + i) * TileSize);
-                if(TetrominoSprite.getPosition().y > 840.2f || BoardCollison(Tetromino) == true )
+                if(TetrominoSprite.getPosition().y > 840.2f * scale || BoardCollison(Tetromino) == true )
                     return false;
             }
         }
@@ -295,7 +295,7 @@ bool isPossibleMove(TetrominoInf Tetromino , int move)
             {
                 TetrominoSprite.setPosition((Tetromino.PozX + j) * TileSize, (Tetromino.PozY + i) * TileSize);
                 // Left and right walls collision check
-                if( TetrominoSprite.getPosition().x < -44.f || TetrominoSprite.getPosition().x > 440.f || BoardCollison(Tetromino) == true)
+                if( TetrominoSprite.getPosition().x < -44.f * scale || TetrominoSprite.getPosition().x > 440.f * scale || BoardCollison(Tetromino) == true)
                     return false;
             }
         }
@@ -309,7 +309,7 @@ bool isPossibleRotate(TetrominoInf Tetromino)
             if(Tetromino.matrix[i][j])
             {
                 TetrominoSprite.setPosition((Tetromino.PozX + j) * TileSize, (Tetromino.PozY + i) * TileSize);
-                if( TetrominoSprite.getPosition().x < -44.f || TetrominoSprite.getPosition().x > 444.2f )
+                if( TetrominoSprite.getPosition().x < -44.f * scale || TetrominoSprite.getPosition().x > 444.2f * scale )
                 {
                     cout << "collision err " << endl;
                     rotate();
