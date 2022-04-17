@@ -7,14 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7483B624280C81AF0016AE92 /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = 7483B623280C81AF0016AE92 /* Resources */; };
 		74A525A6280C33D2008ECEA6 /* ResourcePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74A525A5280C33D2008ECEA6 /* ResourcePath.mm */; };
 		74A525A9280C33D2008ECEA6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A525A8280C33D2008ECEA6 /* main.cpp */; };
 		74A525BE280C34CA008ECEA6 /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A525BC280C34CA008ECEA6 /* game.cpp */; };
 		74A525C5280C38EC008ECEA6 /* TetrisCPPapp-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 74A525C4280C38D2008ECEA6 /* TetrisCPPapp-Info.plist */; };
-		74C0662A280C5D4900190D44 /* resurse in Resources */ = {isa = PBXBuildFile; fileRef = 74C06629280C5D4900190D44 /* resurse */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7483B623280C81AF0016AE92 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
 		74A525A0280C33D2008ECEA6 /* TetrisCPPapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TetrisCPPapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74A525A5280C33D2008ECEA6 /* ResourcePath.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourcePath.mm; sourceTree = "<group>"; };
 		74A525A7280C33D2008ECEA6 /* ResourcePath.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResourcePath.hpp; sourceTree = "<group>"; };
@@ -24,7 +25,6 @@
 		74A525BB280C34CA008ECEA6 /* game.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = game.hpp; sourceTree = "<group>"; };
 		74A525BC280C34CA008ECEA6 /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = "<group>"; };
 		74A525C4280C38D2008ECEA6 /* TetrisCPPapp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TetrisCPPapp-Info.plist"; sourceTree = "<group>"; };
-		74C06629280C5D4900190D44 /* resurse */ = {isa = PBXFileReference; lastKnownFileType = folder; name = resurse; path = TetrisCPPapp/resurse; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,7 +42,6 @@
 			isa = PBXGroup;
 			children = (
 				74A525A2280C33D2008ECEA6 /* TetrisCPPapp */,
-				74C06629280C5D4900190D44 /* resurse */,
 				74A525A1280C33D2008ECEA6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -66,6 +65,7 @@
 				74A525A7280C33D2008ECEA6 /* ResourcePath.hpp */,
 				74A525A8280C33D2008ECEA6 /* main.cpp */,
 				74A525C4280C38D2008ECEA6 /* TetrisCPPapp-Info.plist */,
+				7483B623280C81AF0016AE92 /* Resources */,
 			);
 			path = TetrisCPPapp;
 			sourceTree = "<group>";
@@ -129,7 +129,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				74C0662A280C5D4900190D44 /* resurse in Resources */,
+				7483B624280C81AF0016AE92 /* Resources in Resources */,
 				74A525C5280C38EC008ECEA6 /* TetrisCPPapp-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -261,9 +261,11 @@
 		74A525B6280C33D2008ECEA6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "TetrisCPPapp/TetrisCPPapp-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -271,9 +273,11 @@
 		74A525B7280C33D2008ECEA6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "TetrisCPPapp/TetrisCPPapp-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
