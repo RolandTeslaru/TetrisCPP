@@ -29,6 +29,8 @@ Text TextScore;
 Text TextLevel;
 Text TextDeletedLines;
 
+Image icon;
+
 
 Time Timer;
 RenderWindow GameWin(VideoMode(GameWinX,GameWinY), "Tetris" );
@@ -133,8 +135,8 @@ void initialize()
     GameWin.clear(Color(37,37,42));
     MapShape.setFillColor(Color::Black);
     GameWin.setFramerateLimit(60);
-    TextFont.loadFromFile("Resources/SfMonoFont.ttf");
-    if(!TextFont.loadFromFile("Resources/SfMonoFont.ttf"))
+    TextFont.loadFromFile(resourcePath() + "SfMonoFont.ttf");
+    if(!TextFont.loadFromFile(resourcePath() + "SfMonoFont.ttf"))
     {
         cout << "Error loading text font" << endl;
     }
@@ -159,7 +161,6 @@ void initialize()
     TextDeletedLines.setPosition(MapLength * TileSize + 20 ,MapHeight * TileSize -120);
     
     // Set the Icon
-    sf::Image icon;
     if (!icon.loadFromFile(resourcePath() + "icon.png")) {
         return EXIT_FAILURE;
     }
