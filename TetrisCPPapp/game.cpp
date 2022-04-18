@@ -28,6 +28,7 @@ int TotalDeletedLindes ;
 Text TextScore;
 Text TextLevel;
 Text TextDeletedLines;
+Text TextGameOver;
 
 Image icon;
 
@@ -129,6 +130,18 @@ TetrominoInf blocks[7] =
 Font TextFont;
 Board GameBoard;
 
+bool gameover()
+{
+    for(int j = 0; j<MapLength;j++)
+    {
+        if(GameBoard.matrix[19][j] == true)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void initialize()
 {
     // Initialize game window
@@ -143,22 +156,27 @@ void initialize()
     TextLevel.setFont(TextFont);
     TextScore.setFont(TextFont);
     TextDeletedLines.setFont(TextFont);
+    TextGameOver.setFont(TextFont);
     
     TextLevel.setCharacterSize(20 * scale);
     TextScore.setCharacterSize(20 * scale);
     TextDeletedLines.setCharacterSize(20 * scale);
+    TextGameOver.setCharacterSize(20 * scale);
     
     TextLevel.setFillColor(Color::White);
     TextScore.setFillColor(Color::White);
     TextDeletedLines.setFillColor(Color::White);
+    TextGameOver.setFillColor(Color::Red);
     
     TextLevel.setStyle(Text::Bold);
     TextScore.setStyle(Text::Bold);
     TextDeletedLines.setStyle(Text::Bold);
+    TextGameOver.setStyle(Text::Bold);
     
-    TextLevel.setPosition(MapLength * TileSize + 20 ,MapHeight * TileSize -40);
+    TextLevel.setPosition((MapLength * TileSize + 20 ) * scale , ( MapHeight * TileSize -40 ) * scale);
     TextScore.setPosition(MapLength * TileSize + 20 , MapHeight * TileSize -80);
-    TextDeletedLines.setPosition(MapLength * TileSize + 20 ,MapHeight * TileSize -120);
+    TextDeletedLines.setPosition(MapLength * TileSize * scale + 20 ,MapHeight * TileSize * scale -120);
+    TextGameOver.setPosition((MapLength * TileSize * scale ) / 2 , (MapHeight * TileSize * scale) / 2);
     
     // Set the Icon
     if (!icon.loadFromFile(resourcePath() + "icon.png")) {
@@ -194,7 +212,13 @@ void startgame()
     score = 0;
     TotalDeletedLindes = 0;
 }
-
+void restart()
+{
+    for(int i = 0; i<MapHeight;i++)
+        for(int j = 0; j<MapLength;j++)
+            GameBoard.matrix[i][j] = 0;
+    startgame();
+}
 // Check current tetromino for overlapping sprites with stored board sprites
 int BoardCollison(TetrominoInf Tetromino )
 {
@@ -213,10 +237,7 @@ int BoardCollison(TetrominoInf Tetromino )
                         if(GameBoard.matrix[i_board][j_board])
                         {
                             if(TetrominoSprite.getPosition().x == j_board && TetrominoSprite.getPosition().y == i_board)
-                            {
-                                cout << "Overlapping sprites" << endl;
                                 return 1;
-                            }
                         }
                     }
                 }
@@ -284,7 +305,14 @@ bool isPossibleDown(TetrominoInf Tetromino)
         }
     return true;
 }
-
+bool isPossibleForceDown(TetrominoInf Tetromino)
+{
+    for(int y = 1 ; y>MapHeight ; y++)
+    {
+        if(isPossibleDown(Tetromino) == true);
+        
+    }
+}
 bool isPossibleMove(TetrominoInf Tetromino , int move)
 {
     Tetromino.PozX +=  2 * move;
@@ -303,26 +331,26 @@ bool isPossibleMove(TetrominoInf Tetromino , int move)
 }
 bool isPossibleRotate(TetrominoInf Tetromino)
 {
+    cout << endl;
     rotate();
     for(int i=0;i<Tetromino.Size;i++)
         for(int j=0;j<Tetromino.Size;j++)
             if(Tetromino.matrix[i][j])
             {
                 TetrominoSprite.setPosition((Tetromino.PozX + j) * TileSize, (Tetromino.PozY + i) * TileSize);
-                if( TetrominoSprite.getPosition().x < -44.f * scale || TetrominoSprite.getPosition().x > 444.2f * scale )
+                cout << TetrominoSprite.getPosition().x << endl;
+                if( TetrominoSprite.getPosition().x < -44.f * scale || TetrominoSprite.getPosition().x >= 396.2f * scale || BoardCollison(Tetromino) == true)
                 {
+                    Tetromino.PozX --;
                     cout << "collision err " << endl;
-                    rotate();
-                    rotate();
-                    rotate();
-                    rotate();
                     return false;
                 }
             }
     rotate();
+    rotate();
+    rotate();
     return true;
 }
-
 void storePiece()
 {
     for(int i=0;i<current.Size;i++)
@@ -333,7 +361,6 @@ void storePiece()
                 GameBoard.color = {113,113,116};
             }
 }
-
 void input()
 {
     Movement = 0;
@@ -351,9 +378,10 @@ void input()
         {   ForceDown = true; break;}
         case Keyboard::Down:
         {   KeyDown = true; break;}
+        case Keyboard::R:
+        {   restart(); break; }
     }
 }
-
 void draw(TetrominoInf Tetromino)
 {
     // draw map map background and clear the screen idk
@@ -383,20 +411,37 @@ void draw(TetrominoInf Tetromino)
 }
 
 void update()
-{   // Movement and rotation input  +   Collision check
+{
+    // Movement and rotation input  +   Collision check
     if(Rotate)
+    {
         if(isPossibleRotate(current))
+        {
+            cout << "Permited" << endl;
             rotate();
-    
+        }
+        else
+        {
+            rotate();
+            rotate();
+            rotate();
+        }
+    }
     if(Movement == -1 && isPossibleMove(current, Movement))
         current.PozX --;
+    
     else if(Movement == 1 && isPossibleMove(current, Movement))
         current.PozX ++;
    
     if(KeyDown && isPossibleDown(current))
         current.PozY ++ ;
     
-    if(FrameNum % 10  == 0)
+    if(isPossibleDown(current) == false && current.PozY >18)
+    {
+        cout << "STOPS TOP STOP STOP " << endl;
+    }
+    
+    if(FrameNum % 60  == 0)
     {
         // To go down every 10 frames
         if(!isPossibleDown(current))
