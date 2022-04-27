@@ -39,9 +39,12 @@ Texture BlockTexture;
 Texture WinBackgroundTexture;
 Sprite s_Block(BlockTexture);
 Sprite WinBackgroundSprite(WinBackgroundTexture);
+
 RectangleShape MapShape(Vector2f(MapLength * 44.f, MapHeight * 44.f));
 RectangleShape TetrominoSprite(Vector2f(42.f * scale,42.f * scale));
+RectangleShape PrevTetrominoSprite(Vector2f(42.f * scale , 42.f * scale));
 RectangleShape StoredPiece(Vector2f(42.f * scale , 42.f * scale));
+
 Event GameEvent;
 
 TetrominoInf blocks[7] =
@@ -126,7 +129,7 @@ TetrominoInf blocks[7] =
         "T"
         
     }
-},current;
+},current , prevCurrent;
 Font TextFont;
 Board GameBoard;
 
@@ -148,6 +151,7 @@ void initialize()
     GameWin.clear(Color(37,37,42));
     MapShape.setFillColor(Color::Black);
     GameWin.setFramerateLimit(60);
+    
     TextFont.loadFromFile(resourcePath() + "SfMonoFont.ttf");
     if(!TextFont.loadFromFile(resourcePath() + "SfMonoFont.ttf"))
     {
@@ -183,6 +187,8 @@ void initialize()
         return EXIT_FAILURE;
     }
     GameWin.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    current = blocks[rand()%7];
+    prevCurrent = blocks[rand()%7];
 }
 
 void scoringSys(int deletedlines)
@@ -315,7 +321,7 @@ bool isPossibleForceDown(TetrominoInf Tetromino)
 }
 bool isPossibleMove(TetrominoInf Tetromino , int move)
 {
-    Tetromino.PozX +=  2 * move;
+    Tetromino.PozX +=  move;
     for(int i=0; i<Tetromino.Size; i++)
         for(int j=0; j<Tetromino.Size; j++)
         {
@@ -323,7 +329,7 @@ bool isPossibleMove(TetrominoInf Tetromino , int move)
             {
                 TetrominoSprite.setPosition((Tetromino.PozX + j) * TileSize, (Tetromino.PozY + i) * TileSize);
                 // Left and right walls collision check
-                if( TetrominoSprite.getPosition().x < -44.f * scale || TetrominoSprite.getPosition().x > 440.f * scale || BoardCollison(Tetromino) == true)
+                if( TetrominoSprite.getPosition().x < 0.f * scale || TetrominoSprite.getPosition().x > 420.f * scale || BoardCollison(Tetromino) == true)
                     return false;
             }
         }
@@ -408,6 +414,18 @@ void draw(TetrominoInf Tetromino)
     GameWin.draw(TextLevel);
     GameWin.draw(TextScore);
     GameWin.draw(TextDeletedLines);
+    
+    prevCurrent.PozX = 12;
+    prevCurrent.PozY = 1;
+    
+    for(int i = 0 ; i<prevCurrent.Size; i++)
+        for(int j = 0 ; j<prevCurrent.Size; j++)
+            if(prevCurrent.matrix[i][j])
+            {
+                PrevTetrominoSprite.setPosition((prevCurrent.PozX + j) * TileSize, (prevCurrent.PozY + i) * TileSize);
+                PrevTetrominoSprite.setFillColor(prevCurrent.color);
+                GameWin.draw(PrevTetrominoSprite);
+            }
 }
 
 void update()
@@ -436,11 +454,6 @@ void update()
     if(KeyDown && isPossibleDown(current))
         current.PozY ++ ;
     
-    if(isPossibleDown(current) == false && current.PozY >18)
-    {
-        cout << "STOPS TOP STOP STOP " << endl;
-    }
-    
     if(FrameNum % 60  == 0)
     {
         // To go down every 10 frames
@@ -468,8 +481,11 @@ int game()
         if(NewCurrent)
         {
             storePiece();
-            current = blocks[rand()%7];
+            current = prevCurrent;
+            prevCurrent = blocks[rand()%7];
+            
             current.PozY = -3;
+            current.PozX = 5;
             NewCurrent = false;
         }
         while(GameWin.pollEvent(GameEvent))
