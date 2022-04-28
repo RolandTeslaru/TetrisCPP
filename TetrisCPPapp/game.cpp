@@ -335,19 +335,19 @@ bool isPossibleMove(TetrominoInf Tetromino , int move)
         }
     return true;
 }
+
 bool isPossibleRotate(TetrominoInf Tetromino)
 {
     cout << endl;
     rotate();
-    for(int i=0;i<Tetromino.Size;i++)
-        for(int j=0;j<Tetromino.Size;j++)
-            if(Tetromino.matrix[i][j])
+    for(int i=0;i<current.Size;i++)
+        for(int j=0;j<current.Size;j++)
+            if(current.matrix[i][j])
             {
-                TetrominoSprite.setPosition((Tetromino.PozX + j) * TileSize, (Tetromino.PozY + i) * TileSize);
+                TetrominoSprite.setPosition((current.PozX + j) * TileSize, (current.PozY + i) * TileSize);
                 cout << TetrominoSprite.getPosition().x << endl;
-                if( TetrominoSprite.getPosition().x < -44.f * scale || TetrominoSprite.getPosition().x >= 396.2f * scale || BoardCollison(Tetromino) == true)
+                if( TetrominoSprite.getPosition().x < -44.f * scale || TetrominoSprite.getPosition().x >= 396.2f * scale || BoardCollison(current) == true)
                 {
-                    Tetromino.PozX --;
                     cout << "collision err " << endl;
                     return false;
                 }
