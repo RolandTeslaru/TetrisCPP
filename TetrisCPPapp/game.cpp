@@ -277,6 +277,7 @@ int DeleteLines()
                 {
                     GameBoard.matrix[y][x] = false;
                     swap(GameBoard.matrix[y][x] , GameBoard.matrix[y - 1][x]);
+                    swap(GameBoard.color[y][x] , GameBoard.color[y-1][x]);
                 }
             }
         }
