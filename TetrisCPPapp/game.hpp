@@ -32,8 +32,8 @@ struct TetrominoInf
 };
 struct Board
 {
-    sf::Color color;
     int matrix[20][10];
+    sf::Color color[20][10];
 };
 int game();
 int initializeEverything();

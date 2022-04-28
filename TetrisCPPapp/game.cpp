@@ -10,7 +10,7 @@ using namespace std;
 using namespace sf;
 using namespace chrono;
 
-int FrameNum = 0 , FPS  , LastFrameNum = 0;
+int FrameNum = 0;
 
 int Movement = 0;
 bool Rotate = false ;
@@ -311,14 +311,7 @@ bool isPossibleDown(TetrominoInf Tetromino)
         }
     return true;
 }
-bool isPossibleForceDown(TetrominoInf Tetromino)
-{
-    for(int y = 1 ; y>MapHeight ; y++)
-    {
-        if(isPossibleDown(Tetromino) == true);
-        
-    }
-}
+
 bool isPossibleMove(TetrominoInf Tetromino , int move)
 {
     Tetromino.PozX +=  move;
@@ -357,15 +350,25 @@ bool isPossibleRotate(TetrominoInf Tetromino)
     rotate();
     return true;
 }
+
 void storePiece()
 {
     for(int i=0;i<current.Size;i++)
         for(int j=0;j<current.Size;j++)
             if(current.matrix[i][j])
             {
-                GameBoard.matrix[int(current.PozY) + i][int(current.PozX + j)] = current.matrix[i][j];
-                GameBoard.color = {113,113,116};
+                GameBoard.matrix[int(current.PozY) + i][int(current.PozX) + j] = current.matrix[i][j];
+                GameBoard.color[int(current.PozY) + i][int(current.PozX) + j] = current.color;
             }
+    cout << endl;
+}
+void HardDrop(TetrominoInf Tetromino)
+{
+    while(isPossibleDown(Tetromino))
+    {
+        Tetromino.PozY++;
+    }
+    current.PozY = Tetromino.PozY;
 }
 void input()
 {
@@ -386,6 +389,8 @@ void input()
         {   KeyDown = true; break;}
         case Keyboard::R:
         {   restart(); break; }
+        case Keyboard::Escape:
+        {GameWin.close(); break;}
     }
 }
 void draw(TetrominoInf Tetromino)
@@ -408,7 +413,7 @@ void draw(TetrominoInf Tetromino)
             if(GameBoard.matrix[i][j])
             {
                 StoredPiece.setPosition(j * TileSize, i * TileSize);
-                StoredPiece.setFillColor({113,113,116});
+                StoredPiece.setFillColor(GameBoard.color[i][j]);
                 GameWin.draw(StoredPiece);
             }
     GameWin.draw(TextLevel);
@@ -454,6 +459,9 @@ void update()
     if(KeyDown && isPossibleDown(current))
         current.PozY ++ ;
     
+    if(ForceDown)
+        HardDrop(current);
+    
     if(FrameNum % 60  == 0)
     {
         // To go down every 10 frames
@@ -484,7 +492,7 @@ int game()
             current = prevCurrent;
             prevCurrent = blocks[rand()%7];
             
-            current.PozY = -3;
+            current.PozY = 0;
             current.PozX = 5;
             NewCurrent = false;
         }
@@ -501,7 +509,6 @@ int game()
         // Check for completed lines and calculate score
         scoringSys(DeleteLines());
         
-        LastFrameNum = FrameNum;
         FrameNum ++;
         // draw and display everything
         draw(current);
