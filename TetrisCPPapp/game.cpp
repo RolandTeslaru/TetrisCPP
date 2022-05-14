@@ -256,9 +256,9 @@ int DeleteLines()
 {
     int deletedlines = 0;
     
-    for(int i = MapHeight-1; i>0; i--)     // X=10=i    Y=20=j
+    for(int i = MapHeight-1; i>0; i--)// Check if every square on the i row is filled
     {
-        bool check = true; // check if every sqaure on the j row is filled
+        bool check = true;
         for(int j = 0; j < MapLength; j++)
         {
             if(GameBoard.matrix[i][j] == false)
@@ -269,6 +269,7 @@ int DeleteLines()
         }
         if(check)
         {
+            // Move row down
             deletedlines ++;
             newlevel = true;
             for(int y = i ; y>0 ; y--)
@@ -284,17 +285,18 @@ int DeleteLines()
     }
     return deletedlines;
 }
-void rotate()
+TetrominoInf rotate(TetrominoInf Tetromino)
 {   // Transpose matrix
-    TetrominoInf tmp = current;
-    for(int i =0; i<current.Size; i++)
-        for(int j =0; j<current.Size; j++)
-            tmp.matrix[i][j] = current.matrix[j][i];
+    TetrominoInf tmp = Tetromino;
+    for(int i =0; i<Tetromino.Size; i++)
+        for(int j =0; j<Tetromino.Size; j++)
+            tmp.matrix[i][j] = Tetromino.matrix[j][i];
     // Reverse Cols
-    current = tmp;
-    for(int i =0; i<current.Size; i++)
-        for(int j =0; j<current.Size / 2; j++)
-            swap(current.matrix[i][j] , current.matrix[i][current.Size -j - 1]);
+    Tetromino = tmp;
+    for(int i =0; i<Tetromino.Size; i++)
+        for(int j =0; j<Tetromino.Size / 2; j++)
+            swap(Tetromino.matrix[i][j] , Tetromino.matrix[i][Tetromino.Size -j - 1]);
+    return Tetromino;
 }
 
 bool isPossibleDown(TetrominoInf Tetromino)
@@ -302,14 +304,11 @@ bool isPossibleDown(TetrominoInf Tetromino)
     Tetromino.PozY++;
     for(int i = 0 ; i<Tetromino.Size; i++)
         for(int j = 0; j<=Tetromino.Size; j++)
-        {
             if(Tetromino.matrix[i][j])
-            {
                 TetrominoSprite.setPosition((Tetromino.PozX + j) * TileSize, (Tetromino.PozY + i) * TileSize);
                 if(TetrominoSprite.getPosition().y > 840.2f * scale || BoardCollison(Tetromino) == true )
                     return false;
-            }
-        }
+
     return true;
 }
 
@@ -332,25 +331,22 @@ bool isPossibleMove(TetrominoInf Tetromino , int move)
 
 bool isPossibleRotate(TetrominoInf Tetromino)
 {
-    cout << endl;
-    rotate();
-    for(int i=0;i<current.Size;i++)
-        for(int j=0;j<current.Size;j++)
-            if(current.matrix[i][j])
+    TetrominoInf tmp = Tetromino;
+    Tetromino = rotate(Tetromino);
+    for(int i=0;i<Tetromino.Size;i++)
+        for(int j=0;j<Tetromino.Size;j++)
+            if(Tetromino.matrix[i][j])
             {
-                TetrominoSprite.setPosition((current.PozX + j) * TileSize, (current.PozY + i) * TileSize);
-                cout << TetrominoSprite.getPosition().x << endl;
-                if( TetrominoSprite.getPosition().x < -44.f * scale || TetrominoSprite.getPosition().x >= 396.2f * scale || BoardCollison(current) == true)
-                {
-                    cout << "collision err " << endl;
+                TetrominoSprite.setPosition((Tetromino.PozX + j) * TileSize, (Tetromino.PozY + i) * TileSize);
+                if( TetrominoSprite.getPosition().x < -44.f * scale || TetrominoSprite.getPosition().x >= 396.2f * scale || BoardCollison(Tetromino) == true)
+                {   // revert changes
+                    Tetromino = tmp;
                     return false;
                 }
             }
-    rotate();
-    rotate();
-    rotate();
     return true;
 }
+
 
 void storePiece()
 {
@@ -361,14 +357,12 @@ void storePiece()
                 GameBoard.matrix[int(current.PozY) + i][int(current.PozX) + j] = current.matrix[i][j];
                 GameBoard.color[int(current.PozY) + i][int(current.PozX) + j] = current.color;
             }
-    cout << endl;
 }
 void HardDrop(TetrominoInf Tetromino)
 {
     while(isPossibleDown(Tetromino))
-    {
         Tetromino.PozY++;
-    }
+    
     current.PozY = Tetromino.PozY;
 }
 void input()
@@ -399,6 +393,7 @@ void draw(TetrominoInf Tetromino)
     // draw map map background and clear the screen idk
     GameWin.clear(Color(37,37,42));
     GameWin.draw(MapShape);
+    
     // draw current active Tetromino
     for(int i =0; i<Tetromino.Size; i++ )
         for(int j =0; j<Tetromino.Size; j++)
@@ -408,6 +403,7 @@ void draw(TetrominoInf Tetromino)
                 TetrominoSprite.setFillColor(Tetromino.color);
                 GameWin.draw(TetrominoSprite);
             }
+    
     // draw stored pieces on game board
     for(int i = 0 ;i<MapHeight; i++)
         for(int j = 0;j<MapLength; j++)
@@ -417,6 +413,7 @@ void draw(TetrominoInf Tetromino)
                 StoredPiece.setFillColor(GameBoard.color[i][j]);
                 GameWin.draw(StoredPiece);
             }
+    
     GameWin.draw(TextLevel);
     GameWin.draw(TextScore);
     GameWin.draw(TextDeletedLines);
@@ -437,20 +434,11 @@ void draw(TetrominoInf Tetromino)
 void update()
 {
     // Movement and rotation input  +   Collision check
+    
     if(Rotate)
-    {
         if(isPossibleRotate(current))
-        {
-            cout << "Permited" << endl;
-            rotate();
-        }
-        else
-        {
-            rotate();
-            rotate();
-            rotate();
-        }
-    }
+            current = rotate(current);
+    
     if(Movement == -1 && isPossibleMove(current, Movement))
         current.PozX --;
     
@@ -463,14 +451,15 @@ void update()
     if(ForceDown)
         HardDrop(current);
     
-    if(FrameNum % 60  == 0)
+    if(FrameNum % (10 * 6)  == 0)
     {
-        // To go down every 10 frames
+        // To go down every 10 * x frames
         if(!isPossibleDown(current))
             NewCurrent = true;
         else
             current.PozY ++;
     }
+    // Reset imput values
     Movement = 0;
     Rotate = false;
     ForceDown = false;

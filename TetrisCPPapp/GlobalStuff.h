@@ -9,6 +9,8 @@
 #ifndef GlobalStuff_h
 #define GlobalStuff_h
 
+using namespace sf;
+
 const int scale = 1;
 
 const int MapLength = 10 * scale , MapHeight = 20 * scale;  // default is ML= 10 MH = 20
