@@ -1,2 +1,2 @@
-# TetrisCPPapp
+# TetrisC++
 Tetris  poorly recreated in C++.
